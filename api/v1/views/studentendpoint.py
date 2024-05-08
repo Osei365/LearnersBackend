@@ -11,24 +11,39 @@ def get_students(id):
     particular teacher"""
 
     teacher = db.get_or_404(Teacher, id)
-    teacher_quizs= [quiz for quiz in teacher.quizs]
-    students = teacher.students
-    students_list = []
-    for student in students:
-        students_dictionary = {}
-        students_dictionary['firstname'] = student.firstname
-        students_dictionary['lastname'] = student.lastname
-        student_quizs = [quiz for quiz in student.quizs if quiz in teacher_quizs]
-        print(student_quizs)
-        student_scores = [score.score for score in student.scores if score.quiz in student_quizs]
-        print(student_scores)
-        students_dictionary['quizTaken'] = len(student_quizs)
-        if len(student_scores) > 0:
-            students_dictionary['averageScore'] = sum(student_scores)/len(student_scores)
-        else:
-            students_dictionary['averageScore']  = 0
-        students_list.append(students_dictionary)
-    return jsonify(students_list)
+    # teacher_quizs= [quiz for quiz in teacher.quizs]
+    # students = teacher.students
+    # students_list = []
+    # for student in students:
+    #     students_dictionary = {}
+    #     students_dictionary['firstname'] = student.firstname
+    #     students_dictionary['lastname'] = student.lastname
+    #     student_quizs = [quiz for quiz in student.quizs if quiz in teacher_quizs]
+    #     print(student_quizs)
+    #     student_scores = [score.score for score in student.scores if score.quiz in student_quizs]
+    #     print(student_scores)
+    #     students_dictionary['quizTaken'] = len(student_quizs)
+    #     if len(student_scores) > 0:
+    #         students_dictionary['averageScore'] = sum(student_scores)/len(student_scores)
+    #     else:
+    #         students_dictionary['averageScore']  = 0
+    #     students_list.append(students_dictionary)
+    quizes = teacher.quizs
+    result_list = []
+    for quiz in quizes:
+        quiz_details = {}
+        quiz_details['subject'] = quiz.subject
+        student_details = []
+        for score in quiz.scores:
+            score_details = {}
+            score_details['firstname'] = score.student.firstname
+            score_details['lastname'] = score.student.lastname
+            score_details['score'] = score.score
+            student_details.append(score_details)
+        quiz_details['student'] = student_details
+        result_list.append(quiz_details)
+
+    return jsonify(result_list)
 
 @app_views.route('/get-students', methods=['GET'])
 def getAllStudents():
