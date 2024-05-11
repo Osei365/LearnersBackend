@@ -1,5 +1,6 @@
 from models import db, Base
-from sqlalchemy import Table, Column, Integer, String, ForeignKey, Text
+from sqlalchemy import Table, Column, Integer, String, ForeignKey, Text, DateTime
+from datetime import datetime
 
 question_quiz = Table(
     'question_quiz',
@@ -10,6 +11,7 @@ question_quiz = Table(
 
 class Question(db.Model):
     id = Column(String(120), primary_key=True)
+    created_at = Column(DateTime, default=datetime.now, nullable=False)
     teacher_id = Column(String(120), ForeignKey('teacher.id'), nullable=False) ## one to many relationship
     subject = Column(String(120), nullable=False) 
     header = Column(String(120))

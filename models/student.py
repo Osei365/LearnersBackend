@@ -1,7 +1,9 @@
 from models import db, Base
 from sqlalchemy.orm import relationship
-from sqlalchemy import Column, String, ForeignKey, Integer
+from sqlalchemy import Column, String, ForeignKey, Integer, DateTime
 from flask_login import UserMixin
+from datetime import datetime
+
 
 
 student_quiz = db.Table('student_quiz',
@@ -17,6 +19,7 @@ class Student(db.Model):
     """Student model"""
 
     id = Column(String(120), primary_key=True)
+    created_at = Column(DateTime, default=datetime.now, nullable=False)
     firstname = Column(String(120))
     email = Column(String(120), nullable=False)
     lastname = Column(String(120))

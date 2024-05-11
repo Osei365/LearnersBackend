@@ -57,6 +57,8 @@ def create_new(id):
     duration = question_metadata.get('duration')
     question_list = question_metadata.get('questions')
     subject = question_metadata.get('Subject')
+    if subject:
+        subject = subject.lower()
   
     question_list = json.loads(question_list)
 
@@ -133,6 +135,8 @@ def create_existing(id):
     subject = question_metadata.get('Subject')
     if not question_id_list:
         abort(404)
+    if subject:
+        subject = subject.lower()
     quiz = Quiz(id = uuid.uuid4())
     quiz.teacher_id = id
     quiz.duration = duration
