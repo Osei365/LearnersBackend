@@ -10,22 +10,24 @@ def get_totals(teacher_id):
     """gets the totals for a teacher based on the month and year"""
 
     teacher = db.get_or_404(Teacher, teacher_id)
+
+    # gets all students, quiz, and questions connected to the teacher
     students = teacher.students
     quizs = teacher.quizs
     questions = teacher.questions
 
+    # gets the unique month and year for students, quiz, and questions
     student_months = set([convert_date_to_string(data.created_at) for data in students])
     quizs_months = set([convert_date_to_string(data1.created_at) for data1 in quizs])
     questions_months = set([convert_date_to_string(data2.created_at) for data2 in questions])
 
     month_year_array = student_months.union(quizs_months).union(questions_months)
-    if len(month_year_array) > 12:
-        month_year_array = list(month_year_array)[:12]
-    else:
-        month_year_array = list(month_year_array)
-
+    month_year_array = list(month_year_array)
     month_year_array.sort(key= lambda x: datetime.strptime(x, '%b %y'))
-    
+    if len(month_year_array) > 12:
+        month_year_array = month_year_array[:12]
+    else:
+        month_year_array = month_year_array
     return_list = []
     for month_year in month_year_array:
         month_total_info = {} # gets information on the particular month and the quiz, question and student totals for that month
