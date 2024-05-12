@@ -9,7 +9,7 @@ from models.question import Question
 from models.quiz import Quiz
 from api.v1.views import app_views, needed, question_options
 from flask import Flask, request, abort, jsonify
-from utils import generate_code
+from utils import generate_code, image_to_jpg
 from werkzeug.utils import secure_filename
 
 UPLOAD_FOLDER = 'app_images/question_images/'
@@ -96,7 +96,7 @@ def create_new(id):
         p.add_run('Question {}'.format(n + 1)).bold = True
         doc.add_paragraph(question_dic['body'])
         if question_dic.get('image'):
-            doc.add_picture(question_dic['image'], width=Inches(1.25), height=Inches(1.25))
+            doc.add_picture(image_to_jpg(question_dic['image']), width=Inches(1.25), height=Inches(1.25))
         options = [question_dic['right_answer'],
                    question_dic['wrong_answer1'],
                    question_dic['wrong_answer2'],
@@ -155,7 +155,7 @@ def create_existing(id):
         p.add_run('Question {}'.format(n + 1)).bold = True
         doc.add_paragraph(question.body)
         if question.image:
-            doc.add_picture(question.image, width=Inches(2.0), height=Inches(1.25))
+            doc.add_picture(image_to_jpg(question.image), width=Inches(2.0), height=Inches(1.25))
         options = [question.right_answer,
                    question.wrong_answer1,
                    question.wrong_answer2,
