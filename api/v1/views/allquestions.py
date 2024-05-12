@@ -60,7 +60,7 @@ def create_new(id):
     if subject:
         subject = subject.lower()
   
-    question_list = json.loads(question_list)
+    question_list = json.loads(question_list)   
 
     # creating the quiz object/model
     quiz = Quiz(id = uuid.uuid4())
