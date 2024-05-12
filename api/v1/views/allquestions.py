@@ -59,9 +59,8 @@ def create_new(id):
     subject = question_metadata.get('Subject')
     if subject:
         subject = subject.lower()
-  
-    question_list = json.loads(question_list)   
-
+    print(files)
+    question_list = json.loads(question_list)
     # creating the quiz object/model
     quiz = Quiz(id = uuid.uuid4())
     quiz.teacher_id = id
@@ -71,6 +70,8 @@ def create_new(id):
 
     # creates a word document
     doc = Document()
+    
+    print(question_list)
 
     for n, question_dic in enumerate(question_list):
         question_dic['id'] = uuid.uuid4()
@@ -81,22 +82,26 @@ def create_new(id):
         del question_dic['image']
         if 'image' + str(n) in files.keys():
             file = files.get('image' + str(n))
+            print(file)
             if file:
                 filename = secure_filename(file.filename)
                 filepath = os.path.join(UPLOAD_FOLDER, filename)
                 file.save(filepath)
-                question_dic['image'] = filepath
+                imagepath = image_to_jpg(filepath)
+                question_dic['image'] = imagepath
+                os.remove(filepath)
 
         question = Question(**question_dic)
         db.session.add(question)
         quiz.questions.append(question)
-        db.session.commit()
 
         p = doc.add_paragraph('')
         p.add_run('Question {}'.format(n + 1)).bold = True
         doc.add_paragraph(question_dic['body'])
         if question_dic.get('image'):
-            doc.add_picture(image_to_jpg(question_dic['image']), width=Inches(1.25), height=Inches(1.25))
+            
+            print(imagepath)
+            doc.add_picture(imagepath, width=Inches(1.25), height=Inches(1.25))
         options = [question_dic['right_answer'],
                    question_dic['wrong_answer1'],
                    question_dic['wrong_answer2'],
@@ -155,7 +160,7 @@ def create_existing(id):
         p.add_run('Question {}'.format(n + 1)).bold = True
         doc.add_paragraph(question.body)
         if question.image:
-            doc.add_picture(image_to_jpg(question.image), width=Inches(2.0), height=Inches(1.25))
+            doc.add_picture(question.image, width=Inches(2.0), height=Inches(1.25))
         options = [question.right_answer,
                    question.wrong_answer1,
                    question.wrong_answer2,
